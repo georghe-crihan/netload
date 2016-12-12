@@ -1,0 +1,25 @@
+#!/bin/sh
+
+DEVICE=@EXTIF_DEVICE@;
+UNIT=@EXTIF_UNIT@;
+PREFIX=/usr/local
+PROG=netload
+
+case "${1}" in
+start)
+	if [ -e ${PREFIX}/libexec/${PROG}.ko ]; then
+	    echo -n " ${PROG}"
+	    kldload ${PREFIX}/libexec/${PROG}.ko
+	fi
+	if [ -x ${PREFIX}/bin/${PROG} ]; then
+	    ${PREFIX}/bin/${PROG} -s -d $DEVICE -u $UNIT
+	fi
+	;;
+stop)
+	kldunload ${PROG}.ko && echo -n " ${PROG}"
+	;;
+*)
+	echo "Usage: `basename $0` {start|stop}" >&2
+	exit 64
+	;;
+esac
